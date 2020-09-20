@@ -12,14 +12,14 @@
 You can see the API for both the OV7670 and the ILI9341 in `OV7670.h` and `ILI9341.h`, respectively.
 
 ## OV7670.h
-    You must define `CAMERA_RESET_GPIO_Port` and `CAMERA_RESET_Pin` for the library to work properly(probably in `main.h`). Also, you should think about adding an output pin for the powerdown pin on the OV7670 module. This library builds from the STM32 HAL, so you must include it.
+You must define `CAMERA_RESET_GPIO_Port` and `CAMERA_RESET_Pin` for the library to work properly(probably in `main.h`). Also, you should think about adding an output pin for the powerdown pin on the OV7670 module. This library builds from the STM32 HAL, so you must include it.
 
-    In `OV7670_REG.h` you can find the register configuration for the OV7670; Feel free to play with those values or changing them altogether if you are using a different camera module. I didn't find much documentation about this(apart from the datasheet), so I strongly advise checking similar projects(see credits section)
+In `OV7670_REG.h` you can find the register configuration for the OV7670; Feel free to play with those values or changing them altogether if you are using a different camera module. I didn't find much documentation about this(apart from the datasheet), so I strongly advise checking similar projects(see credits section)
 
 ## ILI9341.h
-    You must define the 'CS', `DC` and `RST` pin and ports. To do so, you can change the values in `ILI9341.h`. This library builds from the STM32 HAL, so you must include it.
+You must define the 'CS', `DC` and `RST` pin and ports. To do so, you can change the values in `ILI9341.h`. This library builds from the STM32 HAL, so you must include it.
 
-    In  `ILI9341_GFX.h` you can find the API for useful functions like drawing images or different shapes on screen.
+In  `ILI9341_GFX.h` you can find the API for useful functions like drawing images or different shapes on screen.
 
 # Pinout
 Pinout of CubeMX:
