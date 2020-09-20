@@ -3,7 +3,7 @@
 
  # Description
  This repo provides the library and demo code to interface a OV7670 camera via the DCMI interface found in several STM32 microcontrollers. To test and debug, a serial(SPI) interface for the ILI9341 is also provided, which displays the image captured.
- [!demo](demo.jpg)
+ ![demo](demo.jpg)
  As you can see, this is only a small(and messy) demo, but it will be useful for future projects.  
 
  It should be fairly easy to port it to different STM32 boards, provided they have a DCMI interface.
@@ -23,10 +23,10 @@ You can see the API for both the OV7670 and the ILI9341 in `OV7670.h` and `ILI93
 
 # Pinout
 Pinout of CubeMX:
-[!CubeMx_Pinout](pinout_lqfp144.png)
+![CubeMx_Pinout](pinout_lqfp144.png)
 
 Pinout of Nucleo-H743ZI2 board:
-[!Nucleo_Pinout](nucleo_pinout.jpg)
+![Nucleo_Pinout](nucleo_pinout.jpg)
 
 
 # Comments and caveats
