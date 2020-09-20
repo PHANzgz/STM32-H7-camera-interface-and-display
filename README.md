@@ -25,7 +25,7 @@ In  `ILI9341_GFX.h` you can find the API for useful functions like drawing image
 Pinout of CubeMX:
 ![CubeMx_Pinout](pinout_lqfp144.png)
 
-Pinout of Nucleo-H743ZI2 board:
+Pinout of Nucleo-H743ZI2 board(highlighted cells):
 ![Nucleo_Pinout](nucleo_pinout.jpg)
 
 
