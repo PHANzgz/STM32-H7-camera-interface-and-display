@@ -19,11 +19,13 @@ If you are running the demo in RGB565 color mode, ensure the `USE_GRAYSCALE` fla
 
 In this mode, the image frame buffer should be of size `QVGA_HEIGHT*QVGA_WIDTH /2` in 32-bit words since there are two bytes per pixel(i.e. two pixels per 32-bit word).
 
-For the grayscale mode(`USE_GRAYSCALE` should be 1), the camera is actually set in YUV(YCbCr 4:2:2) color mode, so to get the gray values, the Cb and Cr values are ignored, keeping only the luminance(Y) ones. To do so, set the following DCMI peripheral settings:
+For the grayscale mode(`USE_GRAYSCALE` should be `1`), the camera is actually set in YUV(YCbCr 4:2:2) color mode, so to get the gray values, the Cb and Cr values are ignored, keeping only the luminance(Y) ones. To do so, set the following DCMI peripheral settings:
 
 ![dcmi_gray](/images/dcmi_grayscale.png)
 
 In this mode, there is just one pixel per byte(the luminance), so each 32-bit word can hold four pixels' data. Therefore, the image frame buffer should be of size `QVGA_HEIGHT*QVGA_WIDTH /4` in 32-bit words.
+
+For both modes a DMA stream should be configured(DCMI --> memory). Default settings work fine, but you may enable FIFO.
 
 ## OV7670.h
 You must define `CAMERA_RESET_GPIO_Port` and `CAMERA_RESET_Pin` for the library to work properly(probably in `main.h`). Also, you should think about adding an output pin for the power-down pin on the OV7670 module. This library builds from the STM32 HAL, so you must include it.
