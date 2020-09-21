@@ -12,8 +12,9 @@
 #include <stdio.h>
 #include "main.h"
 #include "OV7670.h"
-#include "OV7670_REG.h"
 #include <stdint.h>
+#include "OV7670_REG.h"
+
 
 /*** Internal Const Values, Macros ***/
 
@@ -29,6 +30,7 @@ static void (* s_cbFrame)();
 static uint32_t s_currentH;
 static uint32_t s_currentV;
 static uint8_t capture = 0;
+static uint8_t imgMode = OV7670_MODE_QVGA_RGB565;
 
 /*** Internal Function Declarations ***/
 //static HAL_StatusTypeDef ov7670_write(uint8_t regAddr, uint8_t data);
@@ -55,7 +57,7 @@ HAL_StatusTypeDef ov7670_init(DCMI_HandleTypeDef *p_hdcmi, DMA_HandleTypeDef *p_
   return HAL_OK;
 }
 
-HAL_StatusTypeDef ov7670_config(uint32_t mode){
+HAL_StatusTypeDef ov7670_config(uint8_t mode){
   ov7670_stopCap();
   ov7670_write(0x12, 0x80);  // RESET
   HAL_Delay(30);
@@ -63,22 +65,31 @@ HAL_StatusTypeDef ov7670_config(uint32_t mode){
     ov7670_write(OV7670_reg[i][0], OV7670_reg[i][1]);
     HAL_Delay(1);
   }
+  if(mode == OV7670_MODE_QVGA_YUV){
+	  ov7670_write(0x12, 0x10); // QVGA, YUV
+	  ov7670_write(0x40, 0xc0); // 00-FF, No RGB
+
+	  imgMode = OV7670_MODE_QVGA_YUV;
+  }
   return HAL_OK;
 }
 
+// Capture modes are OV7670_CAP_SINGLE_FRAME or OV7670_CAP_CONTINUOUS
+// Image modes are OV7670_MODE_QVGA_RGB565 or OV7670_MODE_QVGA_YUV
 HAL_StatusTypeDef ov7670_startCap(uint32_t capMode, uint32_t destAddress){
-  ov7670_stopCap();
-  if (capMode == OV7670_CAP_CONTINUOUS) {
-    /* note: continuous mode automatically invokes DCMI, but DMA needs to be invoked manually */
-    s_destAddressForContiuousMode = destAddress;
-    HAL_DCMI_Start_DMA(sp_hdcmi, DCMI_MODE_CONTINUOUS, destAddress, OV7670_QVGA_WIDTH * OV7670_QVGA_HEIGHT/2);
-  } else if (capMode == OV7670_CAP_SINGLE_FRAME) {
-    s_destAddressForContiuousMode = 0;
-    capture = 1;
-    HAL_DCMI_Start_DMA(sp_hdcmi, DCMI_MODE_SNAPSHOT, destAddress, OV7670_QVGA_WIDTH * OV7670_QVGA_HEIGHT/2);
-  }
 
-  return HAL_OK;
+	ov7670_stopCap();
+	if (capMode == OV7670_CAP_CONTINUOUS) {
+		/* note: continuous mode automatically invokes DCMI, but DMA needs to be invoked manually */
+		s_destAddressForContiuousMode = destAddress;
+		HAL_DCMI_Start_DMA(sp_hdcmi, DCMI_MODE_CONTINUOUS, destAddress, OV7670_QVGA_WIDTH * OV7670_QVGA_HEIGHT/imgMode);
+	} else if (capMode == OV7670_CAP_SINGLE_FRAME) {
+		s_destAddressForContiuousMode = 0;
+		capture = 1;
+		HAL_DCMI_Start_DMA(sp_hdcmi, DCMI_MODE_SNAPSHOT, destAddress, OV7670_QVGA_WIDTH * OV7670_QVGA_HEIGHT/imgMode);
+	}
+
+	return HAL_OK;
 }
 
 HAL_StatusTypeDef ov7670_stopCap(){

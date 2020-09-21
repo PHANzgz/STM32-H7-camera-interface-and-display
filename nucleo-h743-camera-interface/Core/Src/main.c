@@ -34,6 +34,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define USE_GRAYSCALE 0
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -55,7 +57,11 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-uint32_t frame_buffer[OV7670_QVGA_WIDTH * OV7670_QVGA_HEIGHT/2] = {0};
+#if USE_GRAYSCALE
+uint32_t frame_buffer[OV7670_QVGA_WIDTH * OV7670_QVGA_HEIGHT/4];
+#else
+uint32_t frame_buffer[OV7670_QVGA_WIDTH * OV7670_QVGA_HEIGHT/2];
+#endif
 uint8_t new_capture = 0;
 
 /* USER CODE END PV */
@@ -117,7 +123,13 @@ int main(void)
 
   HAL_GPIO_WritePin(CAMERA_PWR_DWN_GPIO_Port, CAMERA_PWR_DWN_Pin, GPIO_PIN_RESET); // Turn on camera
   ov7670_init(&hdcmi, &hdma_dcmi, &hi2c1);
+
+#if USE_GRAYSCALE
+  ov7670_config(OV7670_MODE_QVGA_YUV);
+#else
   ov7670_config(OV7670_MODE_QVGA_RGB565);
+#endif
+  //ov7670_config(OV7670_MODE_QVGA_RGB565);
   ov7670_registerCallback(NULL, NULL, &onFrameCallback);
   ILI9341_Init(&hspi1);
 
@@ -127,12 +139,21 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+#if USE_GRAYSCALE
+	  // DCMI setting "Byte select" must be "capture every other byte to ignore Cb or Cr data"
+	  // DCMI setting "Byte select start" must be "Interface captures second data"
+	  if (new_capture) ILI9341_Draw_Image_From_OV7670_GRAY((unsigned char*) frame_buffer);
+#else
 	  if (new_capture) ILI9341_Draw_Image_From_OV7670((unsigned char*) frame_buffer);
+#endif
 
 	  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == 0){
-	  		ov7670_startCap(OV7670_CAP_SINGLE_FRAME, (uint32_t)frame_buffer);
-	  	}
+		  //ov7670_startCap(OV7670_CAP_SINGLE_FRAME, (uint32_t)frame_buffer);
+		  ov7670_startCap(OV7670_CAP_SINGLE_FRAME, (uint32_t)frame_buffer);
+	  }
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }

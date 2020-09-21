@@ -65,6 +65,7 @@ void ILI9341_Draw_Filled_Rectangle_Size_Text(uint16_t X0, uint16_t Y0, uint16_t 
 void ILI9341_Draw_Image(const unsigned char* Image_Array, uint8_t Orientation);
 
 void ILI9341_Draw_Image_From_OV7670(const unsigned char* img);
+void ILI9341_Draw_Image_From_OV7670_GRAY(const unsigned char* img);
 void ILI9341_Draw_Image_From_OV7670_SLOW(const uint16_t* img);
 
 #endif

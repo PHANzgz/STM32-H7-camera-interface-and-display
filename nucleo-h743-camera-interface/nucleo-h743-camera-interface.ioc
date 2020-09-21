@@ -1,6 +1,7 @@
 #MicroXplorer Configuration settings - do not modify
+DCMI.ByteSelectMode=DCMI_BSM_ALL
 DCMI.HSPolarity=DCMI_HSPOLARITY_LOW
-DCMI.IPParameters=HSPolarity,PCKPolarity,VSPolarity
+DCMI.IPParameters=HSPolarity,PCKPolarity,VSPolarity,ByteSelectMode
 DCMI.PCKPolarity=DCMI_PCKPOLARITY_RISING
 DCMI.VSPolarity=DCMI_VSPOLARITY_HIGH
 Dma.DCMI.0.Direction=DMA_PERIPH_TO_MEMORY

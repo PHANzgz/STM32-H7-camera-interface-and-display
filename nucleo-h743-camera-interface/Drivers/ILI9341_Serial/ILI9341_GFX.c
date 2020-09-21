@@ -358,6 +358,8 @@ void ILI9341_Draw_Image(const unsigned char* Image_Array, uint8_t Orientation)
 	}
 }
 
+// Draw image captured from OV7670 camera in RGB565 mode
+// img must be a uint32_t buffer of size at least PIXEL_HEIGHT*PIXEL_WIDTH/2
 void ILI9341_Draw_Image_From_OV7670(const unsigned char* img){
 	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
 	ILI9341_Set_Address(0,0,ILI9341_SCREEN_WIDTH,ILI9341_SCREEN_HEIGHT);
@@ -381,6 +383,42 @@ void ILI9341_Draw_Image_From_OV7670(const unsigned char* img){
 	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 }
 
+// Draw image captured from OV7670 camera in YUV mode and display it as grayscale
+// DCMI setting "Byte select" must be "capture every other byte" to ignore Cb or Cr data
+// DCMI setting "Byte select start" must be "Interface captures second data"
+// img must be a uint32_t buffer of size at least PIXEL_HEIGHT*PIXEL_WIDTH/4
+void ILI9341_Draw_Image_From_OV7670_GRAY(const unsigned char* img){
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Set_Address(0,0,ILI9341_SCREEN_WIDTH,ILI9341_SCREEN_HEIGHT);
+
+	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+
+	const uint16_t buf_size = BURST_MAX_SIZE;
+	unsigned char tx_buf[buf_size];
+	uint32_t counter = 0;
+
+	for(uint32_t i = 0; i < ILI9341_SCREEN_WIDTH*ILI9341_SCREEN_HEIGHT*2/buf_size; i++)
+	{
+		for(uint32_t k = 0; k< buf_size; k+=2)
+		{
+
+			// For gray, R=G=B
+			uint16_t gray = (uint16_t) img[(counter+k)/2];
+			uint16_t rb = (gray * 31) / 255; // red and blue are 5 bits
+			uint16_t g = (gray *63) / 255;	// green is 6 bits
+			uint16_t color = (rb<<11)|(g<<5)|(rb<<0);
+
+			tx_buf[k]	= color >> 8;
+			tx_buf[k+1]	= color;
+		}
+		HAL_SPI_Transmit(sp_hspi, (unsigned char*)tx_buf, buf_size, 10);
+		counter += buf_size;
+	}
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+}
+
+// Used for testing, avoid usage
 void ILI9341_Draw_Image_From_OV7670_SLOW(const uint16_t* img){
 	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
 	for (uint16_t X=0; X<ILI9341_SCREEN_WIDTH; X++){
