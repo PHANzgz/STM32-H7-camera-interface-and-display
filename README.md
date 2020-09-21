@@ -9,7 +9,7 @@
  It should be fairly easy to port it to different STM32 boards, provided they have a DCMI interface.
 
  # Usage
-You can see the API for both the OV7670 and the ILI9341 in `OV7670.h` and `ILI9341.h`, respectively.
+You can see the API for both the OV7670 and the ILI9341 in `OV7670.h` and `ILI9341.h`, respectively. These files can be found in the [/nucleo-h743-camera-interface/Drivers](/nucleo-h743-camera-interface/Drivers) folder. You can find the example usage in [main.c](/nucleo-h743-camera-interface/Core/Src/main.c).
 
 ## OV7670.h
 You must define `CAMERA_RESET_GPIO_Port` and `CAMERA_RESET_Pin` for the library to work properly(probably in `main.h`). Also, you should think about adding an output pin for the power-down pin on the OV7670 module. This library builds from the STM32 HAL, so you must include it.
