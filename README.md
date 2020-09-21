@@ -5,7 +5,7 @@
  This repo provides the library and demo code to interface an OV7670 camera via the DCMI interface found in several STM32 microcontrollers. To test and debug, a serial(SPI) interface for the ILI9341 is also provided, which displays the image captured. It supports both RGB565 and grayscale color modes.
 
  ![demo](/images/demo.jpg)
- 
+
  As you can see, this is only a small(and messy) demo, but it will be useful for future projects.  
 
  It should be fairly easy to port it to different STM32 boards, provided they have a DCMI interface.
@@ -13,13 +13,13 @@
  # Usage
 You can see the API for both the OV7670 and the ILI9341 in `OV7670.h` and `ILI9341.h`, respectively. These files can be found in the [/nucleo-h743-camera-interface/Drivers](/nucleo-h743-camera-interface/Drivers) folder. You can find the example usage in [main.c](/nucleo-h743-camera-interface/Core/Src/main.c).
 
-For the RGB565 color mode, ensure the `USE_GRAYSCALE` flag is set to `0`. Also, DCMI peripheral settings should look as follows:
+If you are running the demo in RGB565 color mode, ensure the `USE_GRAYSCALE` flag is set to `0` in `main.c`. Also, DCMI peripheral settings should look as follows:
 
 ![dcmi_rgb565](/images/dcmi_rgb.png)
 
 In this mode, the image frame buffer should be of size `QVGA_HEIGHT*QVGA_WIDTH /2` in 32-bit words since there are two bytes per pixel(i.e. two pixels per 32-bit word).
 
-For the grayscale mode, the camera is actually set in YUV(YCbCr 4:2:2) color mode, so to get the gray values, the Cb and Cr values are ignored, keeping only the luminance(Y) ones. To do so, set the following DCMI peripheral settings:
+For the grayscale mode(`USE_GRAYSCALE` should be 1), the camera is actually set in YUV(YCbCr 4:2:2) color mode, so to get the gray values, the Cb and Cr values are ignored, keeping only the luminance(Y) ones. To do so, set the following DCMI peripheral settings:
 
 ![dcmi_gray](/images/dcmi_grayscale.png)
 
